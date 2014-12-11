@@ -74,7 +74,22 @@ class Markdown(Processor):
 
     def process_regular_row(self, row):
         yield self.DELIM + self.DELIM.join(
-            " %-*s  " % (length, cell.replace('|', '\\|'))
+            " %-*s  " % (length, self.clean(cell))
+            for length, cell in zip(self.lengths, row)
+            ) + self.DELIM
+
+class Dokuwiki(Processor):
+    DELIM = '|'
+    HEADER_DELIM = '^'
+    def process_header_row(self, row):
+        yield self.HEADER_DELIM + self.HEADER_DELIM.join(
+            " %-*s  " % (length, self.clean(cell))
+            for length, cell in zip(self.lengths, row)
+            ) + self.HEADER_DELIM
+
+    def process_regular_row(self, row):
+        yield self.DELIM + self.DELIM.join(
+            " %-*s  " % (length, self.clean(cell))
             for length, cell in zip(self.lengths, row)
             ) + self.DELIM
 
