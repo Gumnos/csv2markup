@@ -31,6 +31,9 @@ class Processor(object):
     def post(self): return []
     def clean(self, s):
         # do any requisite cleaning/escaping of strings
+        # TODO non-HTML processors need to have better
+        # escaping. They're mostly untested with
+        # strange data
         return s
 
 class RST(Processor):
@@ -67,6 +70,9 @@ class RST(Processor):
 class Markdown(Processor):
     extension = ".md"
     DELIM = '|'
+
+    def clean(self, s):
+        return s.replace("\\", "\\\\").replace("|", "\\|")
 
     def process_header_row(self, row):
         for result in self.process_regular_row(row):
