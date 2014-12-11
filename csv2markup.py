@@ -33,6 +33,7 @@ class Processor(object):
         return s
 
 class RST(Processor):
+    extension = ".rst"
     CORNER = '+'
     DELIM = '|'
     def __init__(self, *args, **kwargs):
@@ -63,6 +64,7 @@ class RST(Processor):
         yield self.border
 
 class Markdown(Processor):
+    extension = ".md"
     DELIM = '|'
 
     def process_header_row(self, row):
@@ -80,6 +82,7 @@ class Markdown(Processor):
             ) + self.DELIM
 
 class Dokuwiki(Processor):
+    extension = ".doku"
     DELIM = '|'
     HEADER_DELIM = '^'
     def process_header_row(self, row):
@@ -95,6 +98,7 @@ class Dokuwiki(Processor):
             ) + self.DELIM
 
 class HTML(Processor):
+    extension = ".html"
     def clean(self, s):
         return cgi.escape(s)
 
