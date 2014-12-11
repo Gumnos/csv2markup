@@ -99,6 +99,14 @@ FORMATS = {
     "markdown": (Markdown, ["md"]),
     "rst": (RST, ["rest", "restructured text", "restructuredtext"]),
     }
+# process the aliases
+tmp = {}
+for format, details in FORMATS.iteritems():
+    (cls, aliases) = details
+    for alias in aliases:
+        tmp[alias] = details
+FORMATS.update(tmp)
+del tmp
 
 def build_parser():
     parser = OptionParser(
