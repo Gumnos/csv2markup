@@ -137,7 +137,8 @@ del tmp
 def build_parser():
     parser = OptionParser(
         usage="%prog [options] file1.csv [file2.csv ...]",
-        description="Convert one or more .csv files to reST tables",
+        description="Convert one or more .csv files "
+            "to the table syntax of various markup languages",
         )
     parser.add_option("-f", "--format",
         help="Write them to the local directory "
