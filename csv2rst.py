@@ -27,6 +27,9 @@ class Processor(object):
     def process_header_row(self, row): return []
     def process_regular_row(self, row): return []
     def post(self): return []
+    def clean(self, s):
+        # do any requisite cleaning/escaping of strings
+        return s
 
 class RST(Processor):
     CORNER = '+'
@@ -51,7 +54,7 @@ class RST(Processor):
 
     def process_regular_row(self, row):
         yield self.DELIM + self.DELIM.join(
-            " %-*s  " % (length, cell.replace('|', '\\|'))
+            " %-*s  " % (length, self.clean(cell))
             for length, cell in zip(self.lengths, row)
             ) + self.DELIM
 
