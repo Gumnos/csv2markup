@@ -93,10 +93,25 @@ class Dokuwiki(Processor):
             for length, cell in zip(self.lengths, row)
             ) + self.DELIM
 
+FORMATS = {
+    # Name -> (class, [aliases])
+    "dokuwiki": (Dokuwiki, ["dok", "doku", "dw"]),
+    "markdown": (Markdown, ["md"]),
+    "rst": (RST, ["rest", "restructured text", "restructuredtext"]),
+    }
+
 def build_parser():
     parser = OptionParser(
         usage="%prog [options] file1.csv [file2.csv ...]",
         description="Convert one or more .csv files to reST tables",
+        )
+    parser.add_option("-f", "--format",
+        help="Write them to the local directory "
+            "rather than in the same location as the source. "
+            "WARNING: May produce filename conflicts and bail early",
+        dest="local",
+        action="store_true",
+        default=False,
         )
     parser.add_option("-l", "--local",
         help="Write them to the local directory "
@@ -132,7 +147,7 @@ def main(args):
                 )
             r = csv.reader(f, **params)
             try:
-                processor = RST(r)
+                processor = Dokuwiki(r)
                 for row in processor:
                     print repr(row)
             finally:
