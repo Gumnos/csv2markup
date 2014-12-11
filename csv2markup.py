@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import cgi
 import csv
 import itertools
 import sys
@@ -93,11 +94,36 @@ class Dokuwiki(Processor):
             for length, cell in zip(self.lengths, row)
             ) + self.DELIM
 
+class HTML(Processor):
+    def clean(self, s):
+        return cgi.escape(s)
+
+    def process_header_row(self, row):
+        yield "<table>"
+        yield "<thead>"
+        yield "<tr>" + "".join(
+            "<th>%s</th>" % self.clean(cell)
+            for cell in row
+            ) + "</tr>"
+        yield "</thead>"
+        yield "<tbody>"
+
+    def process_regular_row(self, row):
+        yield "<tr>" + "".join(
+            "<td>%s</td>" % self.clean(cell)
+            for cell in row
+            ) + "</tr>"
+
+    def post(self):
+        yield "</tbody>"
+        yield "</table>"
+
 FORMATS = {
     # Name -> (class, [aliases])
     "dokuwiki": (Dokuwiki, ["dok", "doku", "dw"]),
     "markdown": (Markdown, ["md"]),
     "rst": (RST, ["rest", "restructured text", "restructuredtext"]),
+    "html": (HTML, []),
     }
 # process the aliases
 tmp = {}
@@ -155,7 +181,7 @@ def main(args):
                 )
             r = csv.reader(f, **params)
             try:
-                processor = Dokuwiki(r)
+                processor = HTML(r)
                 for row in processor:
                     print repr(row)
             finally:
