@@ -180,6 +180,8 @@ def main(args):
         sys.stderr.write("%s\n" % issue)
         parser.print_help()
         return ERROR
+
+    processor, _aliases = FORMATS[options.format]
     for fname in args:
         try:
             f = file(fname, "rb")
@@ -191,8 +193,7 @@ def main(args):
                 )
             r = csv.reader(f, **params)
             try:
-                processor = HTML(r)
-                for row in processor:
+                for row in processor(r):
                     print repr(row)
             finally:
                 f.close()
