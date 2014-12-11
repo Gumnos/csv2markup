@@ -153,6 +153,18 @@ def build_parser():
         choices=FORMATS.keys(),
         default=False,
         )
+    parser.add_option("--force",
+        help="Force overwriting of existing output files",
+        dest="force",
+        action="store_true",
+        default=False,
+        )
+    parser.add_option("-o", "--stdout",
+        help="Write to stdout rather than files",
+        dest="stdout",
+        action="store_true",
+        default=False,
+        )
     parser.add_option("-l", "--local",
         help="Write them to the local directory "
             "rather than in the same location as the source. "
