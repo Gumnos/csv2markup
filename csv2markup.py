@@ -238,7 +238,8 @@ def main(args):
                         output_file.write(row)
                         output_file.write("\n")
                 finally:
-                    output_file.close()
+                    if not options.stdout:
+                        output_file.close()
             finally:
                 f.close()
 
