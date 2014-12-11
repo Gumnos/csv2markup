@@ -141,11 +141,12 @@ def build_parser():
             "to the table syntax of various markup languages",
         )
     parser.add_option("-f", "--format",
-        help="Write them to the local directory "
-            "rather than in the same location as the source. "
-            "WARNING: May produce filename conflicts and bail early",
-        dest="local",
-        action="store_true",
+        help="The output format. One of %s" % (
+            ', '.join(sorted(FORMATS.keys()))
+            ),
+        dest="format",
+        action="store",
+        choices=FORMATS.keys(),
         default=False,
         )
     parser.add_option("-l", "--local",
@@ -162,13 +163,21 @@ def build_parser():
         action="store",
         default=',',
         )
+    parser.set_defaults(
+        format=None,
+        )
     return parser
 
 def main(args):
     parser = build_parser()
     options, args = parser.parse_args(args)
-    if not args:
-        sys.stderr.write("No file-names specified\n")
+    issue = None
+
+    if not args: issue = "No filename specified"
+    if not options.format: issue = "No format specified"
+
+    if issue:
+        sys.stderr.write("%s\n" % issue)
         parser.print_help()
         return ERROR
     for fname in args:
