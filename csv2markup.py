@@ -144,7 +144,7 @@ def build_parser():
         description="Convert one or more .csv files "
             "to the table syntax of various markup languages",
         )
-    parser.add_option("-f", "--format",
+    parser.add_option("-f", "--format", "--fmt",
         help="The output format. One of %s" % (
             ', '.join(sorted(FORMATS.keys()))
             ),
