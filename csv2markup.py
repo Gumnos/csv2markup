@@ -2,6 +2,7 @@
 import cgi
 import csv
 import itertools
+import os
 import sys
 from optparse import OptionParser
 
@@ -209,8 +210,35 @@ def main(args):
                 )
             r = csv.reader(f, **params)
             try:
-                for row in processor(r):
-                    print repr(row)
+                if options.stdout:
+                    output_file = sys.stdout
+                else:
+                    output_name, _ = os.path.splitext(fname)
+                    output_name = (
+                        os.path.basename(output_name) +
+                        processor.extension
+                        )
+                    if not options.local:
+                        output_name = os.path.join(
+                            os.path.dirname(fname),
+                            output_name,
+                            )
+                    if os.path.exists(output_name):
+                        if not options.force:
+                            sys.stderr.write("%s already exists. Skipping.\n" % output_name)
+                            continue
+                        if not os.path.isfile(output_name):
+                            sys.stderr.write(
+                                "%s already exists and isn't a file. Skipping.\n"
+                                % output_name)
+                            continue
+                    output_file = file(output_name, "wb")
+                try:
+                    for row in processor(r):
+                        output_file.write(row)
+                        output_file.write("\n")
+                finally:
+                    output_file.close()
             finally:
                 f.close()
 
