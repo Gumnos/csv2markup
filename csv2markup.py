@@ -56,19 +56,19 @@ class RST(Processor):
                 ) + self.CORNER
             setattr(self, field, value)
 
-    def process_header_row(self, row):
-         yield self.border
-         for item in self.process_regular_row(row):
-            yield item
-         yield self.separator
-
-    def process_regular_row(self, row):
-        yield self.DELIM + self.DELIM.join(
+    def _format_row(self, row):
+        return self.DELIM + self.DELIM.join(
             " %-*s  " % (length, self.clean(cell))
             for length, cell in zip(self.lengths, row)
             ) + self.DELIM
 
-    def post(self):
+    def process_header_row(self, row):
+        yield self.border
+        yield self._format_row(row)
+        yield self.separator
+
+    def process_regular_row(self, row):
+        yield self._format_row(row)
         yield self.border
 
 class Markdown(Processor):
