@@ -40,6 +40,10 @@ class RST(Processor):
     extension = ".rst"
     CORNER = '+'
     DELIM = '|'
+
+    def clean(self, s):
+        return s.replace("\\", "\\\\").replace("|", "\\|")
+
     def __init__(self, *args, **kwargs):
         super(RST, self).__init__(*args, **kwargs)
         for field, char in (
