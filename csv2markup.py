@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-import cgi
 import csv
 import itertools
 import os
 import sys
 from optparse import OptionParser
+
+from cgi import escape
 
 SUCCESS, ERROR = range(2)
 
@@ -111,7 +112,7 @@ class Dokuwiki(Processor):
 class HTML(Processor):
     extension = ".html"
     def clean(self, s):
-        return cgi.escape(s)
+        return escape(s)
 
     def process_header_row(self, row):
         yield "<table>"
