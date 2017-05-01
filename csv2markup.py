@@ -210,47 +210,51 @@ def main(args):
 
     processor, _aliases = FORMATS[options.format]
     for fname in args:
-        try:
-            f = file(fname, "rb")
-        except IOError:
-            sys.stderr.write("Could not open %s\n" % fname)
+        if fname == "-":
+            f = sys.stdin
         else:
-            params = dict(
-                delimiter=options.delimiter,
-                )
-            r = csv.reader(f, **params)
             try:
-                if options.stdout:
-                    output_file = sys.stdout
-                else:
-                    output_name, _ = os.path.splitext(fname)
-                    output_name = (
-                        os.path.basename(output_name) +
-                        processor.extension
+                f = file(fname, "rb")
+            except IOError:
+                sys.stderr.write("Could not open %s\n" % fname)
+                continue
+        params = dict(
+            delimiter=options.delimiter,
+            )
+        r = csv.reader(f, **params)
+        try:
+            if options.stdout:
+                output_file = sys.stdout
+            else:
+                output_name, _ = os.path.splitext(fname)
+                output_name = (
+                    os.path.basename(output_name) +
+                    processor.extension
+                    )
+                if not options.local:
+                    output_name = os.path.join(
+                        os.path.dirname(fname),
+                        output_name,
                         )
-                    if not options.local:
-                        output_name = os.path.join(
-                            os.path.dirname(fname),
-                            output_name,
-                            )
-                    if os.path.exists(output_name):
-                        if not options.force:
-                            sys.stderr.write("%s already exists. Skipping.\n" % output_name)
-                            continue
-                        if not os.path.isfile(output_name):
-                            sys.stderr.write(
-                                "%s already exists and isn't a file. Skipping.\n"
-                                % output_name)
-                            continue
-                    output_file = file(output_name, "wb")
-                try:
-                    for row in processor(r):
-                        output_file.write(row)
-                        output_file.write("\n")
-                finally:
-                    if not options.stdout:
-                        output_file.close()
+                if os.path.exists(output_name):
+                    if not options.force:
+                        sys.stderr.write("%s already exists. Skipping.\n" % output_name)
+                        continue
+                    if not os.path.isfile(output_name):
+                        sys.stderr.write(
+                            "%s already exists and isn't a file. Skipping.\n"
+                            % output_name)
+                        continue
+                output_file = file(output_name, "wb")
+            try:
+                for row in processor(r):
+                    output_file.write(row)
+                    output_file.write("\n")
             finally:
+                if not options.stdout:
+                    output_file.close()
+        finally:
+            if f is not sys.stdin:
                 f.close()
 
 if __name__ == "__main__":
