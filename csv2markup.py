@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 import csv
+import errno
 import itertools
 import os
 import sys
 from optparse import OptionParser
 
 from cgi import escape
-
-SUCCESS, ERROR = range(2)
 
 class Processor(object):
     def __init__(self, stream, **options):
@@ -207,7 +206,7 @@ def main(args):
     if issue:
         sys.stderr.write("%s\n" % issue)
         parser.print_help()
-        return ERROR
+        return errno.EINVAL
 
     processor, _aliases = FORMATS[options.format]
     for fname in args:
@@ -257,6 +256,7 @@ def main(args):
         finally:
             if f is not sys.stdin:
                 f.close()
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
