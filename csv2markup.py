@@ -185,7 +185,7 @@ def build_parser():
         default=False,
         )
     parser.add_option("-d", "--delimiter",
-        help="The delimiter to use.",
+        help="The delimiter to use (default=',').",
         dest="delimiter",
         action="store",
         default=',',
